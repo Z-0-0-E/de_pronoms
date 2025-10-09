@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Dé des pronoms personnels</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root { --size: 220px; }
+    body {
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(180deg, #eef2ff, #ffffff);
+    }
+    .scene {
+      width: var(--size);
+      height: var(--size);
+      perspective: 900px;
+      cursor: pointer;
+    }
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+    }
+    .face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px; /* légèrement agrandi */
+      font-weight: 700;
+      color: #fff;
+      background: #333;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, .12);
+      backface-visibility: hidden;
+    }
+    .face span {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+    /* couleurs des faces */
+    .f1 { transform: translateZ(calc(var(--size)/2)); background: #ff6b6b; }
+    .f2 { transform: rotateY(90deg) translateZ(calc(var(--size)/2)); background: #f59e0b; }
+    .f3 { transform: rotateY(180deg) translateZ(calc(var(--size)/2)); background: #06b6d4; }
+    .f4 { transform: rotateY(-90deg) translateZ(calc(var(--size)/2)); background: #7c3aed; }
+    .f5 { transform: rotateX(90deg) translateZ(calc(var(--size)/2)); background: #10b981; }
+    .f6 { transform: rotateX(-90deg) translateZ(calc(var(--size)/2)); background: #ef476f; }
+
+    footer {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      color: #6b7280;
+      font-size: 13px;
+    }
+
+    @media (max-width:640px) {
+      :root { --size: 160px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="scene" id="scene">
+    <div id="cube" class="cube">
+      <div class="face f1"><span>je</span></div>
+      <div class="face f2"><span>tu</span></div>
+      <div class="face f3"><span>il/elle</span></div>
+      <div class="face f4"><span>nous</span></div>
+      <div class="face f5"><span>vous</span></div>
+      <div class="face f6"><span>ils/elles</span></div>
+    </div>
+  </div>
+
+  <footer>Appuie ou clique sur le dé pour lancer</footer>
+
+  <script>
+    let faces = ["je", "tu", "il/elle", "nous", "vous", "ils/elles"];
+    const cube = document.getElementById('cube');
+    const scene = document.getElementById('scene');
+
+    const faceRotations = [
+      { x: 0, y: 0 },      // f1
+      { x: 0, y: -90 },    // f2
+      { x: 0, y: 180 },    // f3
+      { x: 0, y: 90 },     // f4
+      { x: 90, y: 0 },     // f5
+      { x: -90, y: 0 }     // f6
+    ];
+
+    let lastIndices = [];
+
+    function rollOnce() {
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * 6);
+      } while (lastIndices.includes(idx));
+
+      const rot = faceRotations[idx];
+      const spinsX = (Math.floor(Math.random() * 4) + 1) * 360;
+      const spinsY = (Math.floor(Math.random() * 4) + 1) * 360;
+
+      cube.style.transform = `rotateX(${rot.x + spinsX}deg) rotateY(${rot.y + spinsY}deg)`;
+
+      lastIndices.push(idx);
+      if (lastIndices.length > 2) lastIndices.shift();
+    }
+
+    scene.addEventListener('click', rollOnce);
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        rollOnce();
+      }
+    });
+  </script>
+</body>
+</html>
