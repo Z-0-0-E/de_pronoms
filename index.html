@@ -14,12 +14,12 @@
       align-items: center;
       justify-content: center;
       background: linear-gradient(180deg, #eef2ff, #ffffff);
+      cursor: pointer; /* <-- tout le corps cliquable */
     }
     .scene {
       width: var(--size);
       height: var(--size);
       perspective: 900px;
-      cursor: pointer;
     }
     .cube {
       width: 100%;
@@ -34,7 +34,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 32px; /* légèrement agrandi */
+      font-size: 34px; /* légèrement agrandi */
       font-weight: 700;
       color: #fff;
       background: #333;
@@ -61,6 +61,7 @@
       bottom: 12px;
       color: #6b7280;
       font-size: 13px;
+      pointer-events: none;
     }
 
     @media (max-width:640px) {
@@ -80,12 +81,10 @@
     </div>
   </div>
 
-  <footer>Appuie ou clique sur le dé pour lancer</footer>
+  <footer>Appuie ou clique n’importe où pour lancer le dé</footer>
 
   <script>
-    let faces = ["je", "tu", "il/elle", "nous", "vous", "ils/elles"];
     const cube = document.getElementById('cube');
-    const scene = document.getElementById('scene');
 
     const faceRotations = [
       { x: 0, y: 0 },      // f1
@@ -102,7 +101,7 @@
       let idx;
       do {
         idx = Math.floor(Math.random() * 6);
-      } while (lastIndices.includes(idx));
+      } while (lastIndices.includes(idx)); // évite doublons récents
 
       const rot = faceRotations[idx];
       const spinsX = (Math.floor(Math.random() * 4) + 1) * 360;
@@ -114,7 +113,8 @@
       if (lastIndices.length > 2) lastIndices.shift();
     }
 
-    scene.addEventListener('click', rollOnce);
+    // Clique ou espace = lancer
+    document.body.addEventListener('click', rollOnce);
     window.addEventListener('keydown', e => {
       if (e.code === 'Space') {
         e.preventDefault();
