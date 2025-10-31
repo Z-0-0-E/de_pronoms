@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Dés : pronoms + drapeaux</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <style>
+    :root { --size: 220px; }
+    body {
+      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 200px; /* espace entre les deux dés */
+      background: linear-gradient(180deg, #eef2ff, #ffffff);
+      cursor: pointer;
+    }
+    .scene {
+      width: var(--size);
+      height: var(--size);
+      perspective: 900px;
+    }
+    .cube {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 1s cubic-bezier(.2, .8, .2, 1);
+    }
+    .face {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: 700;
+      color: #fff;
+      border-radius: 14px;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, .12);
+      backface-visibility: hidden;
+    }
+    .face span {
+      padding: 12px 14px;
+      border-radius: 10px;
+      background: rgba(0, 0, 0, 0.15);
+    }
+
+    /* couleurs du cube des pronoms (inchangées) */
+    .pronoun .f1 { transform: translateZ(calc(var(--size)/2)); background: #ff6b6b; }
+    .pronoun .f2 { transform: rotateY(90deg) translateZ(calc(var(--size)/2)); background: #f59e0b; }
+    .pronoun .f3 { transform: rotateY(180deg) translateZ(calc(var(--size)/2)); background: #06b6d4; }
+    .pronoun .f4 { transform: rotateY(-90deg) translateZ(calc(var(--size)/2)); background: #7c3aed; }
+    .pronoun .f5 { transform: rotateX(90deg) translateZ(calc(var(--size)/2)); background: #10b981; }
+    .pronoun .f6 { transform: rotateX(-90deg) translateZ(calc(var(--size)/2)); background: #ef476f; }
+
+    /* cube des drapeaux : couleurs plus claires */
+    .flag .f1 { transform: translateZ(calc(var(--size)/2)); background: #fef3c7; }
+    .flag .f2 { transform: rotateY(90deg) translateZ(calc(var(--size)/2)); background: #dbeafe; }
+    .flag .f3 { transform: rotateY(180deg) translateZ(calc(var(--size)/2)); background: #e0e7ff; }
+    .flag .f4 { transform: rotateY(-90deg) translateZ(calc(var(--size)/2)); background: #dcfce7; }
+    .flag .f5 { transform: rotateX(90deg) translateZ(calc(var(--size)/2)); background: #fce7f3; }
+    .flag .f6 { transform: rotateX(-90deg) translateZ(calc(var(--size)/2)); background: #fff7ed; }
+
+    footer {
+      position: fixed;
+      left: 12px;
+      bottom: 12px;
+      color: #6b7280;
+      font-size: 13px;
+      pointer-events: none;
+    }
+
+    @media (max-width:640px) {
+      :root { --size: 160px; }
+      body { gap: 40px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Dé des pronoms -->
+  <div class="scene pronoun">
+    <div id="cubePronoun" class="cube">
+      <div class="face f1"><span>je</span></div>
+      <div class="face f2"><span>tu</span></div>
+      <div class="face f3"><span>il/elle</span></div>
+      <div class="face f4"><span>nous</span></div>
+      <div class="face f5"><span>vous</span></div>
+      <div class="face f6"><span>ils/elles</span></div>
+    </div>
+  </div>
+
+  <!-- Dé des drapeaux -->
+  <div class="scene flag">
+    <div id="cubeFlag" class="cube">
+      <div class="face f1"><span>🇨🇳</span></div>
+      <div class="face f2"><span>🇫🇷</span></div>
+      <div class="face f3"><span>🇩🇪</span></div>
+      <div class="face f4"><span>🇮🇹</span></div>
+      <div class="face f5"><span>🇪🇸</span></div>
+      <div class="face f6"><span>🇬🇧</span></div>
+    </div>
+  </div>
+
+  <footer>Appuie ou clique n’importe où pour lancer les dés</footer>
+
+  <script>
+    const cubePronoun = document.getElementById('cubePronoun');
+    const cubeFlag = document.getElementById('cubeFlag');
+
+    const faceRotations = [
+      { x: 0, y: 0 },
+      { x: 0, y: -90 },
+      { x: 0, y: 180 },
+      { x: 0, y: 90 },
+      { x: 90, y: 0 },
+      { x: -90, y: 0 }
+    ];
+
+    let lastPronounIndices = [];
+    let lastFlagIndices = [];
+
+    function rollCube(cube, lastIndices) {
+      let idx;
+      do {
+        idx = Math.floor(Math.random() * 6);
+      } while (lastIndices.includes(idx)); // évite 2 répétitions d’affilée
+
+      const rot = faceRotations[idx];
+      const spinsX = (Math.floor(Math.random() * 4) + 1) * 360;
+      const spinsY = (Math.floor(Math.random() * 4) + 1) * 360;
+      cube.style.transform = `rotateX(${rot.x + spinsX}deg) rotateY(${rot.y + spinsY}deg)`;
+
+      lastIndices.push(idx);
+      if (lastIndices.length > 2) lastIndices.shift();
+    }
+
+    function rollBoth() {
+      rollCube(cubePronoun, lastPronounIndices);
+      rollCube(cubeFlag, lastFlagIndices);
+    }
+
+    document.body.addEventListener('click', rollBoth);
+    window.addEventListener('keydown', e => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        rollBoth();
+      }
+    });
+  </script>
+</body>
+</html>
