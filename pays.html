@@ -7,16 +7,26 @@
   <style>
     :root { --size: 220px; }
     body {
-      font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 200px; /* espace entre les deux dés */
-      background: linear-gradient(180deg, #eef2ff, #ffffff);
-      cursor: pointer;
-    }
+  font-family: Inter, system-ui, Segoe UI, Roboto, Arial;
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 120px; /* écart pour grand écran */
+  background: linear-gradient(180deg, #eef2ff, #ffffff);
+  cursor: pointer;
+  flex-direction: row; /* par défaut côte à côte */
+}
+
+/* Sur mobile, on empile les dés */
+@media (max-width:640px) {
+  :root { --size: 160px; }
+  body {
+    gap: 40px;         /* écart réduit */
+    flex-direction: column; /* empilement vertical */
+  }
+}
     .scene {
       width: var(--size);
       height: var(--size);
