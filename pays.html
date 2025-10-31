@@ -13,7 +13,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 120px; /* écart pour grand écran */
+  gap: 200px; /* écart pour grand écran */
   background: linear-gradient(180deg, #eef2ff, #ffffff);
   cursor: pointer;
   flex-direction: row; /* par défaut côte à côte */
@@ -23,8 +23,12 @@
 @media (max-width:640px) {
   :root { --size: 160px; }
   body {
-    gap: 40px;         /* écart réduit */
-    flex-direction: column; /* empilement vertical */
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .scene.pronoun {
+    margin-bottom: 50px; /* espace entre pronoms et drapeaux */
   }
 }
     .scene {
